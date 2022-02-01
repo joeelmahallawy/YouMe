@@ -6,6 +6,7 @@ import {
   Flex,
   Box,
   Image,
+  useForceUpdate,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -14,15 +15,11 @@ import StudyPic from "../attachments/studying-group.jpeg";
 import GroupPic from "../attachments/group-meeting.jpeg";
 import { useGlobalUser } from "../lib/globalStates";
 import { useRecoilState } from "recoil";
-import globalUser from "../lib/recoi";
+import globalUser from "../lib/recoil";
+import Link from "next/link";
+import { NextPageContext } from "next";
 
 const IndexPage = () => {
-  const [user, setUser] = useRecoilState(globalUser);
-  useEffect(() => {
-    setUser(supabase.auth.user());
-  }, [supabase.auth.user()]);
-  console.log(user);
-
   return (
     <>
       <Center
@@ -32,6 +29,8 @@ const IndexPage = () => {
         w={["90%", "80%", "70%", "60%", "50%"]}
         m="0 auto"
       >
+        <Link href="/api/auth/login">SignIin</Link>
+        {/* /api/auth/login */}
         <Heading fontSize={["2rem", "2.5rem", "3rem", "3.5rem", "4rem"]}>
           Welcome to YouMe
         </Heading>
@@ -80,5 +79,4 @@ const IndexPage = () => {
     </>
   );
 };
-
 export default IndexPage;

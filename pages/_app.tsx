@@ -2,14 +2,18 @@ import { ChakraProvider, theme } from "@chakra-ui/react";
 import { AppProps } from "next/app";
 import icon from "../attachments/apple-touch-icon.png";
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { useGlobalUser } from "../lib/globalStates";
 import { supabase } from "../lib/supabase";
 import { RecoilRoot, useRecoilState } from "recoil";
-import globalUser from "../lib/recoi";
+import { UserProvider } from "@auth0/nextjs-auth0";
+import { NextPageContext } from "next";
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = (
+  props
+  // { Component, pageProps }: AppProps
+) => {
+  console.log(props);
   return (
     <RecoilRoot>
       <ChakraProvider theme={theme}>
@@ -19,11 +23,25 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
         <Layout>
-          <Component {...pageProps} />
+          <UserProvider>
+            <props.Component {...props.pageProps} />
+          </UserProvider>
         </Layout>
       </ChakraProvider>
     </RecoilRoot>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const userDataResponse = await fetch("http://localhost:3000/api/userstats", {
+    headers: { Cookie: ctx.req.headers.cookie },
+  });
+  const userData = await userDataResponse.json();
+  return {
+    props: {
+      userData,
+    },
+  };
 };
 
 export default MyApp;
